@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+
+<style type="text/css">
+@media screen
+{
+/*
+	div.divHeader {
+	    display: none;
+	}
+	div.divFooter {
+	    display: none;
+	}
+*/
+}
+@media print {
+	div.divHeader {
+	    position: fixed;
+	    top: 0;
+	}
+	div.divFooter {
+	    position: fixed;
+	    bottom: 0;
+	}
+	div.loadButton {
+	    display: none;
+	}
+}
+</style>
+
+<html>
+  <head>
+    <title>Pollo negro, leyendo cvs :(</title>
+    <script type="text/javascript" src="csvjson.js" ></script>
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="csv.js"></script>
+    <script type="text/javascript">
+
+function addProduct(image,code,name,description,amount,category,subcategory)
+{
+  image_tag = '<img src="img/'+image+'"/>';
+  code_tag = '<p><b>Codigo: </b>'+code+'</p>';
+  name_tag = '<p><b>Nombre: </b>'+name+'</p>';
+  amount_tag = '<p><b>Cantidad: </b>'+amount+'</p>';
+  description_tag = '<p><b>Descripcion: </b>'+description+'</p>';
+  category_tag = '<p><b>Categoria: </b>'+category+'</p>';
+  subcategory_tag = '<p><b>Subcategoria: </b>'+subcategory+'</p>';
+  $("#productos").append(getLi(image_tag+code_tag+name_tag+description_tag+amount_tag+category_tag+subcategory_tag));
+}
+
+//Append to ul
+function appendToUl(text,ul_id)
+{
+  $("#"+ul_id).append(getLi(text));
+}
+
+function appendToUlWithLink(text,link,ul_id)
+{
+  $("#"+ul_id).append(getLiWithLink(text,link));
+}
+
+function appendUlToUl(new_id,destination_id)
+{
+  $("#"+destination_id).append(getUl(new_id));
+}
+
+//Create htmls
+function getLi(text)
+{
+  return '<li><span class="tab">'+text+'</span></li>';
+}
+
+function getUl(id)
+{
+  return '<ul id="'+id+'"></ul>';
+}
+
+function getLiWithLink(text, link)
+{
+  return '<li><a href="'+link+'"><span class="tab">'+text+'</span></a></li>';
+}
+
+    var reader; //GLOBAL File Reader object for demo purpose only
+
+    /**
+     * Check for the various File API support.
+     */
+    function checkFileAPI() {
+        if (window.File && window.FileReader && window.FileList && window.Blob) {
+            reader = new FileReader();
+            return true; 
+        } else {
+            alert('The File APIs are not fully supported by your browser. Fallback required.');
+            return false;
+        }
+    }
+
+    /**
+     * read text input
+     */
+    function readText(filePath) {
+        var output = ""; //placeholder for text output
+        if(filePath.files && filePath.files[0]) {           
+            reader.onload = function (e) {
+                output = e.target.result;
+                displayContents(output);
+            };//end onload()
+            reader.readAsText(filePath.files[0]);
+        }//end if html5 filelist support
+        else if(ActiveXObject && filePath) { //fallback to IE 6-8 support via ActiveX
+            try {
+                reader = new ActiveXObject("Scripting.FileSystemObject");
+                var file = reader.OpenTextFile(filePath, 1); //ActiveX File Object
+                output = file.ReadAll(); //text contents of file
+                file.Close(); //close file "input stream"
+                displayContents(output);
+            } catch (e) {
+                if (e.number == -2146827859) {
+                    alert('Unable to access local files due to browser security settings. ' + 
+                     'To overcome this, go to Tools->Internet Options->Security->Custom Level. ' + 
+                     'Find the setting for "Initialize and script ActiveX controls not marked as safe" and change it to "Enable" or "Prompt"'); 
+                }
+            }       
+        }
+        else { //this is where you could fallback to Java Applet, Flash or similar
+            return false;
+        }       
+        return true;
+    }   
+
+    /**
+     * display content using a basic HTML replacement
+     */
+    function displayContents(txt)
+    {
+        //var el = document.getElementById('main'); 
+        //el.innerHTML = txt; //display output in DOM
+
+        var rows = CSV.parse( txt );
+        var i = 1;
+        while(i<rows.length)
+        {
+          addProduct(rows[i][0],rows[i][1],rows[i][2],rows[i][3],rows[i][4],rows[i][5],rows[i][6]);
+          //addProduct(image,code,name,description,amount)
+          i++;
+        }
+    }   
+</script>
+</head>
+<body onload="checkFileAPI();">
+
+  <div class="divHeader">
+    <p>Headerr</p>
+  </div>
+
+  <div class="loadButton">
+    <input type="file" onchange='readText(this)' />
+  </div>
+
+<!--
+  <div id="container">    
+    <br/>
+    <hr/>   
+    <h3>Contents of the Text file:</h3>
+    <div id="main">
+            ...
+    </div>
+  </div>
+-->
+
+  <h4>Productos</h4>
+
+  <ul id='productos'>
+  </ul> 
+
+<div class="divFooter">Footerr</div>
+
+</body>
+</html>
