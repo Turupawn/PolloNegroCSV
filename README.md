@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # csvjson.js
 
 csvjson.js is a simple standalone JavaScript file to convert between CSV data
@@ -10,3 +11,9 @@ style objects (you'll need to use JSON.js to work around that).
 The demo website shows how to use it.
 
 Author: Aaron Snoswell (@aaronsnoswell, elucidatedbiany.com)
+=======
+PolloNegroCSV
+=============
+
+Leyendo productos de jlist desde un csv y mostrandolos
+>>>>>>> 5adaebb20b87de6bf6760dcf98939a25dc81e4a6
